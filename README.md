@@ -1,7 +1,3 @@
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/2cc030b4-87e1-40a0-b5bf-1b7d6b62820b" width="300">
-</p>
-
 # FramePack
 
 Official implementation and desktop software for ["Frame Context Packing and Drift Prevention in Next-Frame-Prediction Video Diffusion Models"](https://lllyasviel.github.io/frame_pack_gitpage/).
@@ -47,18 +43,6 @@ About speed, on my RTX 4090 desktop it generates at a speed of 2.5 seconds/frame
 In any case, you will directly see the generated frames since it is next-frame(-section) prediction. So you will get lots of visual feedback before the entire video is generated.
 
 # Installation
-
-**Windows**:
-
-[>>> Click Here to Download One-Click Package (CUDA 12.6 + Pytorch 2.6) <<<](https://github.com/lllyasviel/FramePack/releases/download/windows/framepack_cu126_torch26.7z)
-
-After you download, you uncompress, use `update.bat` to update, and use `run.bat` to run.
-
-Note that running `update.bat` is important, otherwise you may be using a previous version with potential bugs unfixed.
-
-![image](https://github.com/lllyasviel/stable-diffusion-webui-forge/assets/19834515/c49bd60d-82bd-4086-9859-88d472582b94)
-
-Note that the models will be downloaded automatically. You will download more than 30GB from HuggingFace.
 
 **Linux**:
 
