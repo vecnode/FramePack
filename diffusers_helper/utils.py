@@ -272,11 +272,49 @@ def save_bcthw_as_mp4(x, output_filename, fps=10, crf=0):
             per_row = p
             break
 
-    os.makedirs(os.path.dirname(os.path.abspath(os.path.realpath(output_filename))), exist_ok=True)
+    output_dir = os.path.dirname(os.path.abspath(os.path.realpath(output_filename)))
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
     x = torch.clamp(x.float(), -1., 1.) * 127.5 + 127.5
     x = x.detach().cpu().to(torch.uint8)
     x = einops.rearrange(x, '(m n) c t h w -> t (m h) (n w) c', n=per_row)
-    torchvision.io.write_video(output_filename, x, fps=fps, video_codec='libx264', options={'crf': str(int(crf))})
+
+    # torchvision video writing APIs differ between versions; keep a runtime fallback.
+    write_err = None
+    tv_write_video = getattr(torchvision.io, 'write_video', None)
+    if callable(tv_write_video):
+        try:
+            tv_write_video(output_filename, x, fps=fps, video_codec='libx264', options={'crf': str(int(crf))})
+            return x
+        except Exception as e:
+            write_err = e
+
+    try:
+        from torchvision.io.video import write_video as tv_video_write_video
+        tv_video_write_video(output_filename, x, fps=fps, video_codec='libx264', options={'crf': str(int(crf))})
+        return x
+    except Exception as e:
+        write_err = e if write_err is None else write_err
+
+    x_np = x.numpy()
+    height, width = x_np.shape[1], x_np.shape[2]
+    video_writer = cv2.VideoWriter(
+        output_filename,
+        cv2.VideoWriter_fourcc(*'mp4v'),
+        float(fps),
+        (width, height),
+    )
+
+    if not video_writer.isOpened():
+        raise RuntimeError(f'Failed to open video writer for {output_filename}. Last torchvision error: {write_err}')
+
+    try:
+        for frame in x_np:
+            # OpenCV expects BGR order.
+            video_writer.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+    finally:
+        video_writer.release()
+
     return x
 
 
