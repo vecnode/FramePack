@@ -46,22 +46,23 @@ In any case, you will directly see the generated frames since it is next-frame(-
 
 **Linux**:
 
-We recommend having an independent Python 3.10.
+We recommend having an independent Python 3.10 and [uv](https://docs.astral.sh/uv/).
 
-    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
-    pip install -r requirements.txt
+    uv sync
+
+This will create a `.venv` and install all dependencies, including `torch`, `torchvision`, and `torchaudio` from the CUDA 12.6 index automatically (configured in `pyproject.toml`).
 
 To start the GUI, run:
 
-    python demo_gradio.py
+    uv run python demo_gradio.py
 
 Note that it supports `--share`, `--port`, `--server`, and so on.
 
-The software supports PyTorch attention, xformers, flash-attn, sage-attention. By default, it will just use PyTorch attention. You can install those attention kernels if you know how. 
+The software supports PyTorch attention, xformers, flash-attn, sage-attention. By default, it will just use PyTorch attention. You can install those attention kernels if you know how.
 
 For example, to install sage-attention (linux):
 
-    pip install sageattention==1.0.6
+    uv pip install sageattention==1.0.6
 
 However, you are highly recommended to first try without sage-attention since it will influence results, though the influence is minimal.
 
